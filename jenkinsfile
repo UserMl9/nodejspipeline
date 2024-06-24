@@ -12,12 +12,10 @@ node {
         }
     }
     stage('Docker Build & Push') {
-        withCredentials([string(credentialsId: 'docker-hub', variable: 'DOCKER_HUB_PASSWORD')]) {
-            sh "echo $DOCKER_HUB_PASSWORD | docker login -u aprendizajeml9 --password-stdin https://registry.hub.docker.com"
-            docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-                def ourapp = docker.build("aprendizajeml9/nodejsapp:${gitcommit}", ".")
-                ourapp.push()
-            }
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+            sh 'echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin'
+            def ourapp = docker.build("aprendizajeml9/nodejsapp:${gitcommit}", ".")
+            ourapp.push()
         }
     }
 }
