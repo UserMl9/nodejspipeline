@@ -12,9 +12,13 @@ node {
      }
    }
    stage('Docker Build & Push') {
-      docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-         def ourapp = docker.build("aprendizajeml9/nodejsapp:${gitcommit}", ".")
-         ourapp.push()
-         }
-      }
+      steps {
+        dockerBuildAndPublish {
+            repositoryName('aprendizajeml9/nodejsapp')
+            tag('${GIT_REVISION,length=7}')
+            registryCredentials('docker-hub')
+            forcePull(false)
+            createFingerprints(false)
+            skipDecorate()
+        }
 }
